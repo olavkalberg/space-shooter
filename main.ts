@@ -17,9 +17,57 @@ controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
         . . . . . . . . . . . . . . . . 
         . . . . . . . . . . . . . . . . 
         `, mySprite, 100, 0)
+    if (doubleShooting) {
+        doubleshot = sprites.createProjectileFromSprite(img`
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 
+            2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 
+            2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            `, mySprite, 100, 0)
+        doubleshot.y += 5
+        projectile.y += -5
+    }
 })
 statusbars.onZero(StatusBarKind.EnemyHealth, function (status) {
     status.spriteAttachedTo().destroy()
+})
+sprites.onOverlap(SpriteKind.Player, SpriteKind.Food, function (sprite, otherSprite) {
+    doubleShooting = true
+    otherSprite.destroy()
+})
+sprites.onDestroyed(SpriteKind.Enemy, function (sprite) {
+    if (Math.percentChance(7)) {
+        powerUp = sprites.create(img`
+            f f f f f f f f f f f f f f f f 
+            f f 1 1 1 1 1 1 1 1 1 1 1 1 f f 
+            f 1 1 f f f f f f f f f f 1 1 f 
+            f 1 f f f f f f f f f f f f 1 f 
+            f 1 f f f f f f f f f f f f 1 f 
+            f 1 f 2 2 2 2 2 2 2 2 2 2 f 1 f 
+            f 1 f 2 2 2 2 2 2 2 2 2 2 f 1 f 
+            f 1 f f f f f f f f f f f f 1 f 
+            f 1 f 2 2 2 2 2 2 2 2 2 2 f 1 f 
+            f 1 f 2 2 2 2 2 2 2 2 2 2 f 1 f 
+            f 1 f f f f f f f f f f f f 1 f 
+            f 1 f f f f f f f f f f f f 1 f 
+            f 1 f f f f f f f f f f f f 1 f 
+            f 1 1 f f f f f f f f f 1 1 1 f 
+            f f 1 1 1 1 1 1 1 1 1 1 1 1 f f 
+            f f f f f f f f f f f f f f f f 
+            `, SpriteKind.Food)
+    }
 })
 sprites.onOverlap(SpriteKind.Projectile, SpriteKind.Enemy, function (sprite, otherSprite) {
     statusbars.getStatusBarAttachedTo(StatusBarKind.EnemyHealth, otherSprite).value += -20
@@ -32,6 +80,9 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.Enemy, function (sprite, otherSp
 })
 let statusbar: StatusBarSprite = null
 let enemyship: Sprite = null
+let powerUp: Sprite = null
+let doubleshot: Sprite = null
+let doubleShooting = false
 let projectile: Sprite = null
 let mySprite: Sprite = null
 effects.starField.startScreenEffect()
